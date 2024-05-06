@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sorteador de Equipes</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        position: center;
+        background-image: url('fundo principal.jpg');
+        background-attachment: fixed; /* Mantém a imagem de fundo fixa */
+    }
+
+    .content {
+        text-align: center;
+        position: relative;
+        padding: 20px;
+        color: rgb(255, 255, 255); /* Mudando a cor do texto para branco */
+    }
+
+    h1, h2 {
+        color: rgb(255, 255, 255); /* Mudando a cor do texto para branco */
+    }
+
+    .container {
+        margin-bottom: 15px;
+    }
+
+    .container label {
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .container input[type="number"] {
+        margin-bottom: 10px;
+    }
+
+    .button-container {
+        margin-top: 10px;
+    }
+
+    .button-container button {
+        margin-right: 15px;
+    }
+
+    .background-square {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: rgba(255, 255, 255, 0); /* Cor branca com 50% de opacidade */
+        filter: blur(20px); /* Desfoque para o quadrado */
+        border-radius: 20px; /* Bordas arredondadas */
+        z-index: -1;
+    }
+</style>
+</head>
+<body>
+
+<div class="content">
+    <div class="background-square"></div>
+
+    <h1>Sorteador de Equipes</h1>
+
+    <div class="container">
+        <label for="numStudents">Quantos alunos há na turma?</label>
+        <input type="number" id="numStudents">
+    </div>
+    <div class="button-container">
+        <button onclick="listStudents()">Listar Alunos</button>
+    </div>
+
+    <div id="students-list" style="display: none;">
+        <h2>Lista de Alunos</h2>
+        <ul id="students"></ul>
+        <div class="button-container">
+            <button onclick="clearStudents()">Limpar Lista</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <label for="numPerTeam">Quantas pessoas por equipe?</label>
+        <input type="number" id="numPerTeam">
+    </div>
+    <div class="button-container">
+        <button onclick="randomizeTeams()">Sortear Equipes</button>
+    </div>
+
+    <div id="teams-container"></div>
+</div>
+
+<script>
+    // Função para carregar a lista de alunos do armazenamento local
+    function loadStudents() {
+        var savedStudents = JSON.parse(localStorage.getItem('students'));
+        if (savedStudents) {
+            var studentsList = document.getElementById('students');
+            studentsList.innerHTML = '';
+            savedStudents.forEach(function(studentName) {
+                var listItem = document.createElement('li');
+                listItem.textContent = studentName;
+                studentsList.appendChild(listItem);
+            });
+            document.getElementById('students-list').style.display = 'block';
+        }
+    }
+
+    // Função para salvar a lista de alunos no armazenamento local
+    function saveStudents(students) {
+        localStorage.setItem('students', JSON.stringify(students));
+    }
+
+    // Função para adicionar um aluno à lista
+    function addStudent(studentName) {
+        var studentsList = document.getElementById('students');
+        var listItem = document.createElement('li');
+        listItem.textContent = studentName;
+        studentsList.appendChild(listItem);
+    }
+
+    // Função para listar os alunos
+    function listStudents() {
+        var numStudents = parseInt(document.getElementById('numStudents').value);
+        var students = [];
+        for (var i = 1; i <= numStudents; i++) {
+            var studentName = prompt("Digite o nome do aluno " + i);
+            if (studentName) {
+                students.push(studentName);
+                addStudent(studentName);
+            }
+        }
+        saveStudents(students); // Salva a lista de alunos
+        document.getElementById('students-list').style.display = 'block';
+    }
+
+    // Função para limpar a lista de alunos
+    function clearStudents() {
+        document.getElementById('students').innerHTML = '';
+        document.getElementById('students-list').style.display = 'none';
+        localStorage.removeItem('students'); // Remove a lista de alunos do armazenamento local
+    }
+
+    // Função para sortear equipes
+    function randomizeTeams() {
+        var numPerTeam = parseInt(document.getElementById('numPerTeam').value);
+        var students = JSON.parse(localStorage.getItem('students'));
+        if (!students || students.length < numPerTeam) {
+            alert('É necessário listar alunos antes de sortear as equipes ou não há alunos suficientes.');
+            return;
+        }
+        var numTeams = Math.ceil(students.length / numPerTeam);
+        var teamsContainer = document.getElementById('teams-container');
+        teamsContainer.innerHTML = '';
+        for (var i = 1; i <= numTeams; i++) {
+            var teamTitle = document.createElement('h2');
+            teamTitle.textContent = 'Equipe ' + i;
+            var teamList = document.createElement('ul');
+            for (var j = 0; j < numPerTeam; j++) {
+                var randomIndex = Math.floor(Math.random() * students.length);
+                var student = students.splice(randomIndex, 1)[0];
+                if (student) {
+                    var listItem = document.createElement('li');
+                    listItem.textContent = student;
+                    teamList.appendChild(listItem);
+                }
+            }
+            teamsContainer.appendChild(teamTitle);
+            teamsContainer.appendChild(teamList);
+        }
+    }
+
+    // Carrega a lista de alunos ao carregar a página
+    window.onload = loadStudents;
+</script>
+
+</body>
+</html>
