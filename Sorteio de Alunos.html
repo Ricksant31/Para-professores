@@ -137,6 +137,7 @@
         }
         saveStudents(students); // Salva a lista de alunos
         document.getElementById('students-list').style.display = 'block';
+        document.getElementById('numStudents').value = ''; // Limpa o campo de entrada
     }
 
     // Função para limpar a lista de alunos
@@ -173,6 +174,7 @@
             teamsContainer.appendChild(teamTitle);
             teamsContainer.appendChild(teamList);
         }
+        document.getElementById('numPerTeam').value = ''; // Limpa o campo de entrada
     }
 
     // Carrega a lista de alunos ao carregar a página
