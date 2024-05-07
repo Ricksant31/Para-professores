@@ -23,11 +23,11 @@
         padding: 20px;
         color: rgb(255, 255, 255); /* Mudando a cor do texto para branco */
     }
-    .container input[type="number"] {
-    margin-bottom: 10px;
-    border-radius: 5px; /* Adicionando bordas arredondadas */
-    }
 
+    .container input[type="number"] {
+        margin-bottom: 10px;
+        border-radius: 5px; /* Adicionando bordas arredondadas */
+    }
 
     h1, h2 {
         color: rgb(255, 255, 255); /* Mudando a cor do texto para branco */
@@ -51,20 +51,19 @@
     }
 
     .button-container button {
-    margin-right: 1px;
-    background-color: #56ab3c;
-    color: #000000;
-    border: absolute;
-    padding: 5px 10px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease; /* Adicionando uma transição suave */
-}
+        margin-right: 15px;
+        background-color: #56ab3c;
+        color: #000000;
+        border: absolute;
+        padding: 5px 10px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease; /* Adicionando uma transição suave */
+    }
 
-.button-container button:hover {
-    background-color: #6bda6d; /* Cor diferente ao passar o mouse */
-}
-
+    .button-container button:hover {
+        background-color: #6bda6d; /* Cor diferente ao passar o mouse */
+    }
 
     .background-square {
         position: absolute;
@@ -121,9 +120,7 @@
             var studentsList = document.getElementById('students');
             studentsList.innerHTML = '';
             savedStudents.forEach(function(studentName) {
-                var listItem = document.createElement('li');
-                listItem.textContent = studentName;
-                studentsList.appendChild(listItem);
+                addStudentToList(studentName);
             });
             document.getElementById('students-list').style.display = 'block';
         }
@@ -135,10 +132,16 @@
     }
 
     // Função para adicionar um aluno à lista
-    function addStudent(studentName) {
+    function addStudentToList(studentName) {
         var studentsList = document.getElementById('students');
         var listItem = document.createElement('li');
         listItem.textContent = studentName;
+        var removeButton = document.createElement('button');
+        removeButton.textContent = 'Remover';
+        removeButton.onclick = function() {
+            removeStudent(studentName);
+        };
+        listItem.appendChild(removeButton);
         studentsList.appendChild(listItem);
     }
 
@@ -150,12 +153,30 @@
             var studentName = prompt("Digite o nome do aluno " + i);
             if (studentName) {
                 students.push(studentName);
-                addStudent(studentName);
+                addStudentToList(studentName);
             }
         }
         saveStudents(students); // Salva a lista de alunos
         document.getElementById('students-list').style.display = 'block';
         document.getElementById('numStudents').value = ''; // Limpa o campo de entrada
+    }
+
+    // Função para remover um aluno da lista
+    function removeStudent(studentName) {
+        var studentsList = document.getElementById('students');
+        var studentItems = studentsList.getElementsByTagName('li');
+        for (var i = 0; i < studentItems.length; i++) {
+            if (studentItems[i].textContent === studentName) {
+                studentsList.removeChild(studentItems[i]);
+                break;
+            }
+        }
+        var students = JSON.parse(localStorage.getItem('students'));
+        var index = students.indexOf(studentName);
+        if (index !== -1) {
+            students.splice(index, 1);
+            saveStudents(students); // Salva a lista atualizada de alunos
+        }
     }
 
     // Função para limpar a lista de alunos
