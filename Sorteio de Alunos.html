@@ -50,7 +50,7 @@
         margin-top: 10px;
     }
 
-    .button-container button {
+.button-container button {
         margin-right: 15px;
         background-color: #56ab3c;
         color: #000000;
@@ -61,11 +61,11 @@
         transition: background-color 0.3s ease; /* Adicionando uma transição suave */
     }
 
-    .button-container button:hover {
-        background-color: #6cfe6e; /* Cor diferente ao passar o mouse */
+.button-container button:hover {
+        background-color: #6bda6d; /* Cor diferente ao passar o mouse */
     }
 
-    .background-square {
+.background-square {
         position: absolute;
         top: 50%;
         left: 50%;
@@ -77,19 +77,35 @@
     }
 
     /* Estilo para o botão de remover */
-    .edit-button {
-        margin-left: 15px;
-        background-color: #dcd135; /* Vermelho */
-        color: #000000;
-        border: absolute;
-        padding: 2px 5px;
-        border-radius: 10px;
+.remove-button {
+        margin-left: -15px;
+        background-color: #bf303e; /* Vermelho */
+        color: #ffffff;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 8px;
         cursor: pointer;
         transition: background-color 0.3s ease; /* Adicionando uma transição suave */
     }
 
-    .edit-button:hover {
-        background-color: #ffee00; /* Cor diferente ao passar o mouse */
+.remove-button:hover {
+        background-color: #ff5252; /* Cor diferente ao passar o mouse */
+    }
+
+    /* Estilo para o botão de editar */
+.edit-button {
+        margin-left: -15px;
+        background-color: #ffc107; /* Amarelo */
+        color: #000000;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease; /* Adicionando uma transição suave */
+    }
+
+.edit-button:hover {
+        background-color: #ffd740; /* Cor diferente ao passar o mouse */
     }
 </style>
 </head>
@@ -106,7 +122,7 @@
     </div>
     <div class="button-container">
         <button onclick="listStudents()">Listar Alunos</button>
-    </div>
+    </div><br>
 
     <div id="students-list" style="display: none;">
         <h2>Lista de Alunos</h2>
@@ -114,6 +130,15 @@
         <div class="button-container">
             <button onclick="clearStudents()">Limpar Lista</button>
         </div>
+        <br>
+        <div>
+            <button class="remove-button" onclick="removeStudentPrompt()">Remover Aluno</button>
+        </div>
+        <br>
+        <div>
+            <button class="edit-button" onclick="editStudentPrompt()">Editar Aluno</button>
+        </div>
+        <br>
     </div>
 
     <div class="container">
@@ -151,17 +176,6 @@
         var studentsList = document.getElementById('students');
         var listItem = document.createElement('li');
         listItem.textContent = studentName;
-        var editButton = document.createElement('button');
-        editButton.textContent = 'Editar';
-        editButton.classList.add('edit-button'); // Adicionando classe de estilo ao botão de editar
-        editButton.onclick = function() {
-            var newName = prompt('Digite o novo nome para ' + studentName);
-            if (newName) {
-                listItem.textContent = newName;
-                updateStudentName(studentName, newName);
-            }
-        };
-        listItem.appendChild(editButton);
         studentsList.appendChild(listItem);
     }
 
@@ -181,6 +195,39 @@
         document.getElementById('numStudents').value = ''; // Limpa o campo de entrada
     }
 
+    // Função para remover um aluno da lista
+    function removeStudentPrompt() {
+        var studentName = prompt('Digite o nome do aluno a ser removido:');
+        if (studentName) {
+            removeStudent(studentName);
+        }
+    }
+
+    // Função para remover um aluno da lista
+    function removeStudent(studentName) {
+        var studentsList = document.getElementById('students');
+        var items = studentsList.getElementsByTagName('li');
+        for (var i = 0; i < items.length; i++) {
+            if (items[i].textContent === studentName) {
+                studentsList.removeChild(items[i]);
+                updateStudentsList(); // Atualiza a lista de alunos no armazenamento local
+                return;
+            }
+        }
+        alert('O aluno ' + studentName + ' não foi encontrado na lista.');
+    }
+
+    // Função para atualizar a lista de alunos no armazenamento local após remover um aluno
+    function updateStudentsList() {
+        var students = [];
+        var studentsList = document.getElementById('students');
+        var items = studentsList.getElementsByTagName('li');
+        for (var i = 0; i < items.length; i++) {
+            students.push(items[i].textContent);
+        }
+        saveStudents(students);
+    }
+
     // Função para limpar a lista de alunos
     function clearStudents() {
         document.getElementById('students').innerHTML = '';
@@ -195,6 +242,25 @@
         if (index !== -1) {
             students[index] = newName;
             saveStudents(students); // Salva a lista atualizada de alunos
+        }
+    }
+
+    // Função para editar o nome de um aluno
+    function editStudentPrompt() {
+        var studentName = prompt('Digite o nome do aluno a ser editado:');
+        if (studentName) {
+            var newName = prompt('Digite o novo nome para ' + studentName);
+            if (newName) {
+                updateStudentName(studentName, newName);
+                var studentsList = document.getElementById('students');
+                var items = studentsList.getElementsByTagName('li');
+                for (var i = 0; i < items.length; i++) {
+                    if (items[i].textContent === studentName) {
+                        items[i].textContent = newName;
+                        return;
+                    }
+                }
+            }
         }
     }
 
