@@ -23,6 +23,11 @@
         padding: 20px;
         color: rgb(255, 255, 255); /* Mudando a cor do texto para branco */
     }
+    .container input[type="number"] {
+    margin-bottom: 10px;
+    border-radius: 5px; /* Adicionando bordas arredondadas */
+    }
+
 
     h1, h2 {
         color: rgb(255, 255, 255); /* Mudando a cor do texto para branco */
@@ -46,8 +51,20 @@
     }
 
     .button-container button {
-        margin-right: 15px;
-    }
+    margin-right: 15px;
+    background-color: #56ab3c;
+    color: #000000;
+    border: absolute;
+    padding: 5px 10px;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* Adicionando uma transição suave */
+}
+
+.button-container button:hover {
+    background-color: #6bda6d; /* Cor diferente ao passar o mouse */
+}
+
 
     .background-square {
         position: absolute;
@@ -59,6 +76,7 @@
         border-radius: 20px; /* Bordas arredondadas */
         z-index: -1;
     }
+    
 </style>
 </head>
 <body>
