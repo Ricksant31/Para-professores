@@ -62,7 +62,7 @@
     }
 
     .button-container button:hover {
-        background-color: #6bda6d; /* Cor diferente ao passar o mouse */
+        background-color: #6cfe6e; /* Cor diferente ao passar o mouse */
     }
 
     .background-square {
@@ -75,7 +75,22 @@
         border-radius: 20px; /* Bordas arredondadas */
         z-index: -1;
     }
-    
+
+    /* Estilo para o botão de remover */
+    .edit-button {
+        margin-left: 15px;
+        background-color: #dcd135; /* Vermelho */
+        color: #000000;
+        border: absolute;
+        padding: 2px 5px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background-color 0.3s ease; /* Adicionando uma transição suave */
+    }
+
+    .edit-button:hover {
+        background-color: #ffee00; /* Cor diferente ao passar o mouse */
+    }
 </style>
 </head>
 <body>
@@ -136,12 +151,17 @@
         var studentsList = document.getElementById('students');
         var listItem = document.createElement('li');
         listItem.textContent = studentName;
-        var removeButton = document.createElement('button');
-        removeButton.textContent = 'Remover';
-        removeButton.onclick = function() {
-            removeStudent(studentName);
+        var editButton = document.createElement('button');
+        editButton.textContent = 'Editar';
+        editButton.classList.add('edit-button'); // Adicionando classe de estilo ao botão de editar
+        editButton.onclick = function() {
+            var newName = prompt('Digite o novo nome para ' + studentName);
+            if (newName) {
+                listItem.textContent = newName;
+                updateStudentName(studentName, newName);
+            }
         };
-        listItem.appendChild(removeButton);
+        listItem.appendChild(editButton);
         studentsList.appendChild(listItem);
     }
 
@@ -161,29 +181,21 @@
         document.getElementById('numStudents').value = ''; // Limpa o campo de entrada
     }
 
-    // Função para remover um aluno da lista
-    function removeStudent(studentName) {
-        var studentsList = document.getElementById('students');
-        var studentItems = studentsList.getElementsByTagName('li');
-        for (var i = 0; i < studentItems.length; i++) {
-            if (studentItems[i].textContent === studentName) {
-                studentsList.removeChild(studentItems[i]);
-                break;
-            }
-        }
-        var students = JSON.parse(localStorage.getItem('students'));
-        var index = students.indexOf(studentName);
-        if (index !== -1) {
-            students.splice(index, 1);
-            saveStudents(students); // Salva a lista atualizada de alunos
-        }
-    }
-
     // Função para limpar a lista de alunos
     function clearStudents() {
         document.getElementById('students').innerHTML = '';
         document.getElementById('students-list').style.display = 'none';
         localStorage.removeItem('students'); // Remove a lista de alunos do armazenamento local
+    }
+
+    // Função para atualizar o nome de um aluno na lista
+    function updateStudentName(oldName, newName) {
+        var students = JSON.parse(localStorage.getItem('students'));
+        var index = students.indexOf(oldName);
+        if (index !== -1) {
+            students[index] = newName;
+            saveStudents(students); // Salva a lista atualizada de alunos
+        }
     }
 
     // Função para sortear equipes
